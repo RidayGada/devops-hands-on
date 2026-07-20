@@ -40,15 +40,15 @@ pipeline {
 
         set PID=
 
-        for /f "tokens=5" %%a in ('netstat -ano ^| findstr :9090') do (
+        for /f "tokens=5" %%a in ('netstat -ano ^| findstr :9999') do (
             set PID=%%a
         )
 
         if defined PID (
-            echo Stopping application running on port 9090...
+            echo Stopping application running on port 9999...
             taskkill /F /PID %PID%
         ) else (
-            echo No application is running on port 9090.
+            echo No application is running on port 9999.
         )
 
         exit /b 0
@@ -56,17 +56,24 @@ pipeline {
     }
 }
 
-        stage('Deploy Application') {
+
+stage('Deploy Application') {
     steps {
         bat '''
         @echo off
-        echo Starting Spring Boot Application...
 
-        start "" cmd /c "java -jar target\\student-management-0.0.1-SNAPSHOT.jar"
+        echo Java Version:
+        java -version
 
-        timeout /t 10
+        echo Current Directory:
+        cd
 
-        echo Application Started Successfully.
+        echo Listing target folder:
+        dir target
+
+        echo Starting Application...
+
+        java -jar target\\student-management-0.0.1-SNAPSHOT.jar
         '''
     }
 }
