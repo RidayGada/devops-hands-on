@@ -47,19 +47,19 @@ pipeline {
         }
 
         stage('Deploy Application') {
-            steps {
-                bat '''
-                @echo off
-                echo Starting Spring Boot Application...
+    steps {
+        bat '''
+        @echo off
+        echo Starting Spring Boot Application...
 
-                start "SpringBootApp" cmd /c java -jar target\\*.jar
+        start "" cmd /c "java -jar target\\student-management-0.0.1-SNAPSHOT.jar"
 
-                timeout /t 10 > nul
+        timeout /t 10
 
-                echo Application Started Successfully.
-                '''
-            }
-        }
+        echo Application Started Successfully.
+        '''
+    }
+}
 
     }
 
