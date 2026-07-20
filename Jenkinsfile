@@ -57,23 +57,15 @@ pipeline {
 }
 
 
-stage('Deploy Application') {
+stage('Deploy') {
     steps {
         bat '''
-        @echo off
+        taskkill /F /IM java.exe >nul 2>&1
 
-        echo Java Version:
-        java -version
-
-        echo Current Directory:
-        cd
-
-        echo Listing target folder:
-        dir target
-
-        echo Starting Application...
-
-        java -jar target\\student-management-0.0.1-SNAPSHOT.jar
+        start "" java ^
+        -DDB_USERNAME=%DB_USERNAME% ^
+        -DDB_PASSWORD=%DB_PASSWORD% ^
+        -jar target\\student-management-0.0.1-SNAPSHOT.jar
         '''
     }
 }
