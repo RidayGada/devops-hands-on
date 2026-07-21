@@ -34,43 +34,42 @@ pipeline {
         }
 
         stage('Stop Existing Application') {
+            steps {
+                bat '''
+                @echo off
+                for /f "tokens=5" %%a in ('netstat -ano ^| findstr :9999') do (
+                    echo Stopping existing application PID %%a...
+                    taskkill /PID %%a /F
+                )
+                exit /b 0
+                '''
+            }
+        }
+
+
+        stage('Deploy Application') {
     steps {
         bat '''
         @echo off
+        echo Starting Spring Boot Application...
 
-        set PID=
+        :: Prevent Jenkins from terminating the application
+        set JENKINS_NODE_COOKIE=dontKillMe
 
-        for /f "tokens=5" %%a in ('netstat -ano ^| findstr :9999') do (
-            set PID=%%a
-        )
+        :: Start the Spring Boot application in the background
+        start "" javaw -jar target\\student-management-0.0.1-SNAPSHOT.jar > app.log 2>&1
 
-        if defined PID (
-            echo Stopping application running on port 9999...
-            taskkill /F /PID %PID%
-        ) else (
-            echo No application is running on port 9999.
-        )
+        :: Wait for application startup
+        ping 127.0.0.1 -n 11 > nul
 
-        exit /b 0
+        echo Application Started Successfully.
         '''
     }
 }
-
-
-stage('Deploy') {
-    steps {
-        bat '''
-        taskkill /F /IM java.exe >nul 2>&1
-
-        start "" java ^
-        -DDB_USERNAME=%DB_USERNAME% ^
-        -DDB_PASSWORD=%DB_PASSWORD% ^
-        -jar target\\student-management-0.0.1-SNAPSHOT.jar
-        '''
     }
-}
-
-    }
+    
+    
+    
 
     post {
 
