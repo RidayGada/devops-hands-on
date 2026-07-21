@@ -21,17 +21,6 @@ pipeline {
             }
         }
 
-        stage('Compile') {
-            steps {
-                bat 'mvn clean compile'
-            }
-        }
-
-        stage('Package Application') {
-            steps {
-                bat 'mvn package -DskipTests'
-            }
-        }
 
         stage('Stop Existing Application') {
             steps {
@@ -43,6 +32,19 @@ pipeline {
                 )
                 exit /b 0
                 '''
+            }
+        }
+        
+        
+        stage('Compile') {
+            steps {
+                bat 'mvn clean compile'
+            }
+        }
+
+        stage('Package Application') {
+            steps {
+                bat 'mvn package -DskipTests'
             }
         }
 
