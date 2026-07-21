@@ -1,5 +1,6 @@
 name: Build Spring Boot Application
 
+
 on:
   push:
     branches:
@@ -12,17 +13,19 @@ jobs:
 
   build:
 
+    name: Compile and Package Jar
+
     runs-on: ubuntu-latest
 
 
     steps:
 
-      # Step 1: Download repository code
-      - name: Checkout source code
+      # Download source code into runner
+      - name: Checkout repository
         uses: actions/checkout@v4
 
 
-      # Step 2: Install Java on GitHub runner
+      # Install Java
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -31,21 +34,22 @@ jobs:
           cache: maven
 
 
-      # Step 3: Build Spring Boot application
-      - name: Build with Maven
+      # Compile + Package Spring Boot application
+      - name: Build Spring Boot Jar
         run: |
+          chmod +x mvnw
           ./mvnw clean package -DskipTests
 
 
-      # Step 4: Find generated jar
-      - name: List generated files
+      # Verify generated jar
+      - name: Check generated jar
         run: |
-          ls -la target/
+          ls -lh target/
 
 
-      # Step 5: Upload jar as artifact
-      - name: Upload JAR artifact
+      # Upload jar to GitHub artifact storage
+      - name: Upload Jar Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: spring-boot-application
+          name: spring-boot-jar
           path: target/*.jar
